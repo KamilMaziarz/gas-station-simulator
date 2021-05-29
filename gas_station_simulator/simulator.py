@@ -23,4 +23,4 @@ if __name__ == '__main__':
         if_eating=lambda: random.random() < 0.6,
         next_car_arrival_time=lambda: random.randint(30, 1*60),
     )
-    GasStationSimulator(settings=settings).run(time=60*60*24*5)
+    results = GasStationSimulator(settings=settings).run(time=60*60*24*5)

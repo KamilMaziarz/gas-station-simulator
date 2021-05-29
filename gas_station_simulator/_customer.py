@@ -10,7 +10,7 @@ from gas_station_simulator._gas_station import _GasStation
 
 
 @dataclass
-class _CustomerData:
+class CustomerData:
     number: int
     name: str
     expected_fueling_time: int
@@ -29,7 +29,7 @@ class _Customer:
         self.env = environment
         self._settings = settings
 
-        self.data = _CustomerData(
+        self.data = CustomerData(
             number=number,
             name=f'Car {number}',
             expected_fueling_time=self._settings.customer_fueling_time(),
@@ -82,6 +82,7 @@ class _Customer:
 
         gas_station.parking_places.put(1)
         self.env.logger.info(f'[{self.data.name}]: Leaving the station.')
+        return self.data
 
     def interact_with_the_cashier(self, gas_station: _GasStation):
         self.env.logger.info(f'[{self.data.name}]: Waiting at the counter.')

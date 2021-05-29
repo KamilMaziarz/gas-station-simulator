@@ -13,9 +13,10 @@ from gas_station_simulator._settings import SimulationSettings
 @dataclass
 class CustomerData:
     number: int
-    name: str
-    expected_fueling_time: int
-    eating: bool
+    enter: bool
+    name: str = field(init=False, repr=False)
+    expected_fueling_time: int = field(init=False, repr=False)
+    eating: bool = field(init=False, repr=False)
     arrival_time: int = field(init=False, repr=False)
     fueling_start_time: int = field(init=False, repr=False)
     fueling_end_time: int = field(init=False, repr=False)
@@ -30,12 +31,10 @@ class _Customer:
         self.env = environment
         self._settings = settings
 
-        self.data = CustomerData(
-            number=number,
-            name=f'Car {number}',
-            expected_fueling_time=self._settings.customer_fueling_time(),
-            eating=self._settings.if_eating(),
-        )
+        self.data = CustomerData(number=number, enter=True)
+        self.data.name = f'Car {number}'
+        self.data.expected_fueling_time = self._settings.customer_fueling_time()
+        self.data.eating = self._settings.if_eating()
 
         self._fuel_gotten = 0
 

@@ -13,7 +13,7 @@ from gas_station_simulator._settings import SimulationSettings
 class GasStationSimulator:
     def __init__(self, settings: SimulationSettings):
         self._settings = settings
-        self._customers_results = []
+        self._customers_results: List[CustomerData] = []
 
     def run(self, time: int) -> List[CustomerData]:
         random.seed(0)
@@ -37,6 +37,7 @@ class GasStationSimulator:
                 customer = _Customer(environment=environment, number=i, settings=self._settings)
                 environment.process(self._car_process(environment, gas_station, customer))
             else:
+                self._customers_results.append(CustomerData(number=i, enter=False))
                 environment.logger.info('A car missed station since there are no left parking places.')
 
     def _car_process(
@@ -47,4 +48,3 @@ class GasStationSimulator:
     ) -> Generator[Event, Any, Any]:
         customer_result = yield environment.process(customer.enter(gas_station=gas_station))
         self._customers_results.append(customer_result)
-

@@ -1,7 +1,10 @@
-import simpy
+from typing import Generator, Any
 
-from gas_station_simulator._settings import SimulationSettings
+import simpy
+from simpy import Event
+
 from gas_station_simulator._environment import _SimulationEnvironment
+from gas_station_simulator._settings import SimulationSettings
 from gas_station_simulator._utils import _get_time_string
 
 
@@ -19,7 +22,7 @@ class _GasStation:
         )
         environment.process(self._break_the_pump())
 
-    def _break_the_pump(self):
+    def _break_the_pump(self) -> Generator[Event, Any, Any]:
         while True:
             working_time = self._settings.pump_working_time()
             self.env.logger.info(f'[PUMP BREAK]: A pump will break in'

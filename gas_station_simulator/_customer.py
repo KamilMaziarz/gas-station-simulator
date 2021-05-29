@@ -1,12 +1,13 @@
 import copy
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Optional, Generator, Any
 
 import simpy
+from simpy import Event
 
-from gas_station_simulator._settings import SimulationSettings
 from gas_station_simulator._environment import _SimulationEnvironment
 from gas_station_simulator._gas_station import _GasStation
+from gas_station_simulator._settings import SimulationSettings
 
 
 @dataclass
@@ -38,7 +39,7 @@ class _Customer:
 
         self._fuel_gotten = 0
 
-    def enter(self, gas_station: _GasStation):
+    def enter(self, gas_station: _GasStation) -> Generator[Event, Any, Any]:
         self.data.arrival_time = self.env.now
         self.env.logger.info(f'[{self.data.name}]: Entering the station.')
 
@@ -84,7 +85,7 @@ class _Customer:
         self.env.logger.info(f'[{self.data.name}]: Leaving the station.')
         return self.data
 
-    def interact_with_the_cashier(self, gas_station: _GasStation):
+    def interact_with_the_cashier(self, gas_station: _GasStation) -> Generator[Event, Any, Any]:
         self.env.logger.info(f'[{self.data.name}]: Waiting at the counter.')
         self.env.logger.info(f'[STATION]: {gas_station.cashiers.count} of {gas_station.cashiers.capacity}'
                              f' cashiers are allocated.')
@@ -100,7 +101,7 @@ class _Customer:
         self.env.logger.info(f'[STATION]: {gas_station.cashiers.count} of {gas_station.cashiers.capacity}'
                              f' cashiers are allocated.')
 
-    def wait_and_take_the_food(self, gas_station: _GasStation):
+    def wait_and_take_the_food(self, gas_station: _GasStation) -> Generator[Event, Any, Any]:
         food_preparation_time = self._settings.food_preparation_time()
         self.env.logger.info(f'[{self.data.name}]: Waiting for a hot-dog.')
         self.data.waiting_for_food_time_start_time = self.env.now

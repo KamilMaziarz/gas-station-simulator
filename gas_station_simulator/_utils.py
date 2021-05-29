@@ -1,7 +1,7 @@
 from math import floor
 
 
-def _get_time_string(time: int, print_days: bool = True):
+def _get_time_string(time: int, print_days: bool = True) -> str:
     seconds_in_a_minute = 60
     seconds_in_an_hour = 60*seconds_in_a_minute
     seconds_in_a_day = 24*seconds_in_an_hour

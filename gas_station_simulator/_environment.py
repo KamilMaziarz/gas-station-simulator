@@ -11,7 +11,7 @@ class _EnvironmentLoggerFormatter(logging.Formatter):
         super().__init__(*args, **kwargs)
         self._env = environment
 
-    def formatTime(self, record, datefmt=None):
+    def formatTime(self, record, datefmt=None) -> str:
         return _get_time_string(time=self._env.now)
 
 

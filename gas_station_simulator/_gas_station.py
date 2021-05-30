@@ -14,6 +14,7 @@ class _GasStation:
         self._settings = settings
 
         self.fuel_pumps = simpy.PreemptiveResource(environment, settings.pumps_quantity)
+        self.fuel_pump_parking_place = simpy.Resource(environment, settings.pumps_quantity)
         self.cashiers = simpy.PriorityResource(environment, settings.cashier_quantity)
         self.parking_places = simpy.Container(
             environment,

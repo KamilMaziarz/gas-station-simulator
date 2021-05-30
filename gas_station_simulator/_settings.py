@@ -8,7 +8,8 @@ class SimulationSettings:
     cashier_quantity: int
     pump_working_time: Callable[[], int]
     pump_outage_time: Callable[[], int]
-    customer_fueling_time: Callable[[], int]
+    customer_fuel_needed: Callable[[], int]
+    pump_fueling_speed: float
     interaction_with_cashier_time: Callable[[], int]
     interaction_with_cashier_while_getting_food_time: Callable[[], int]
     food_preparation_time: Callable[[], int]

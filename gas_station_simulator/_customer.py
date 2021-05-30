@@ -33,7 +33,7 @@ class _Customer:
 
         self.data = CustomerData(number=number, enter=True)
         self.data.name = f'Car {number}'
-        self.data.expected_fueling_time = self._settings.customer_fueling_time()
+        self.data.expected_fueling_time = int(self._settings.customer_fuel_needed() / self._settings.pump_fueling_speed)
         self.data.eating = self._settings.if_eating()
 
         self._fuel_gotten = 0
@@ -47,11 +47,16 @@ class _Customer:
         while left_fueling_time:
             self.env.logger.info(f'[{self.data.name}]: Waiting for the pump with the fueling time {left_fueling_time}.')
 
+            pump_parking_place_request = gas_station.fuel_pump_parking_place.request()
+            yield pump_parking_place_request
+            self.env.logger.info(f'[{self.data.name}]: Entering a fuel pump parking place.')
+
             pump_request = gas_station.fuel_pumps.request(priority=1)
             yield pump_request
+
             self.env.logger.info(f'[{self.data.name}]: Fueling.')
-            self.env.logger.info(f'[STATION]: {gas_station.fuel_pumps.count} of {gas_station.fuel_pumps.capacity}'
-                                 f' pumps are allocated.')
+            self.env.logger.info(f'[STATION]: Getting a pump. {gas_station.fuel_pumps.count} of'
+                                 f' {gas_station.fuel_pumps.capacity} pumps are allocated.')
             start_fueling_time = self.env.now
 
             if not hasattr(self.data, 'fueling_start_time'):
@@ -74,11 +79,15 @@ class _Customer:
                                      f' Have {fuel_percentage}% of the fuel needed.')
                 left_fueling_time -= fuel_got
 
+            gas_station.fuel_pumps.release(pump_request)
+            self.env.logger.info(f'[STATION]: Releasing a pump. {gas_station.fuel_pumps.count} of'
+                                 f' {gas_station.fuel_pumps.capacity} pumps are allocated.')
+
             if left_fueling_time == 0:
                 yield self.env.process(self.interact_with_the_cashier(gas_station=gas_station))
                 if self.data.eating:
                     yield self.env.process(self.wait_and_take_the_food(gas_station=gas_station))
-                gas_station.fuel_pumps.release(pump_request)
+                gas_station.fuel_pump_parking_place.release(pump_parking_place_request)
 
         gas_station.parking_places.put(1)
         self.env.logger.info(f'[{self.data.name}]: Leaving the station.')

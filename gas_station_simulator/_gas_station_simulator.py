@@ -1,7 +1,8 @@
 import itertools
 import random
-from typing import List, Generator, Any
+from typing import List, Generator, Any, Union
 
+import pandas as pd
 from simpy import Event
 
 from gas_station_simulator._customer import _Customer, CustomerData
@@ -15,13 +16,17 @@ class GasStationSimulator:
         self._settings = settings
         self._customers_results: List[CustomerData] = []
 
-    def run(self, time: int) -> List[CustomerData]:
+    def run(self, time: int, return_dataframe: bool = True) -> Union[List[CustomerData], pd.DataFrame]:
         random.seed(0)
         environment = _SimulationEnvironment()
         gas_station = _GasStation(environment, settings=self._settings)
         environment.process(self._car_generator(environment=environment, gas_station=gas_station))
         environment.run(until=time)
-        return self._customers_results
+        if return_dataframe:
+            results = self._transform_results_to_dataframe(results=self._customers_results)
+        else:
+            results = self._customers_results
+        return results
 
     def _car_generator(
             self,
@@ -48,3 +53,14 @@ class GasStationSimulator:
     ) -> Generator[Event, Any, Any]:
         customer_result = yield environment.process(customer.enter(gas_station=gas_station))
         self._customers_results.append(customer_result)
+
+    def _transform_results_to_dataframe(self, results: List[CustomerData]) -> pd.DataFrame:  # noqa
+        transformed_results = pd.DataFrame()
+
+        for customer_result in results:
+            customer_data = {}
+            for key in customer_result.__dict__.keys():
+                customer_data[key] = [getattr(customer_result, key)]
+            transformed_results = pd.concat([transformed_results, pd.DataFrame(customer_data)])
+
+        return transformed_results

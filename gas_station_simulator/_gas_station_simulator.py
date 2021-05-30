@@ -63,4 +63,5 @@ class GasStationSimulator:
                 customer_data[key] = [getattr(customer_result, key)]
             transformed_results = pd.concat([transformed_results, pd.DataFrame(customer_data)])
 
+        transformed_results.sort_values(by='number', inplace=True)
         return transformed_results.reset_index(drop=True)

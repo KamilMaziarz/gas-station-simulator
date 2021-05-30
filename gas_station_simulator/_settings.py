@@ -15,3 +15,12 @@ class SimulationSettings:
     food_preparation_time: Callable[[], int]
     if_eating: Callable[[], bool]
     next_car_arrival_time: Callable[[], int]
+
+
+@dataclass
+class ProfitCalculationSettings:
+    pump_monthly_depreciation_cost: int
+    cashier_hourly_cost: float
+    hot_dog_profit: float
+    fuel_profit_per_litre: float
+    other_monthly_costs: int

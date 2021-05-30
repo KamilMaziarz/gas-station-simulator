@@ -1,10 +1,11 @@
 if __name__ == '__main__':
+    import pprint
     import random
 
     import numpy as np
 
-    from gas_station_simulator import SimulationSettings
-    from gas_station_simulator import GasStationSimulator
+    from gas_station_simulator import SimulationSettings, ProfitCalculationSettings, GasStationSimulator, \
+        ProfitCalculator
 
     # pump_working_time - avg time after which ANY of the pumps break
     # e.g. if we have 1 pump and it brakes every 15 days,
@@ -24,4 +25,22 @@ if __name__ == '__main__':
         customer_fuel_needed=lambda: random.randint(30, 70),
         pump_fueling_speed=0.2,
     )
-    results = GasStationSimulator(settings=settings).run(time=60*60*24*30)
+    simulation_time = 60*60*24*3
+    results = GasStationSimulator(settings=settings).run(time=simulation_time)
+
+    profit_calculation_settings_ver_1 = ProfitCalculationSettings(
+        hot_dog_profit=2.0,
+        fuel_profit_per_litre=1,
+        cashier_hourly_cost=30,
+        pump_monthly_depreciation_cost=10_000,
+        other_monthly_costs=40_000,
+    )
+
+    profit_calculator_ver_1 = ProfitCalculator(
+        simulation_settings=settings,
+        profit_calculation_settings=profit_calculation_settings_ver_1,
+        results=results,
+        simulation_time=simulation_time,
+    )
+    profit_results_ver_1 = profit_calculator_ver_1.calculate()
+    pprint.PrettyPrinter(depth=4).pprint(profit_results_ver_1)

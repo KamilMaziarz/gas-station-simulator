@@ -15,6 +15,7 @@ class CustomerData:
     number: int
     enter: bool
     name: str = field(init=False, repr=False)
+    fuel_needed: int = field(init=False, repr=False)
     expected_fueling_time: int = field(init=False, repr=False)
     eating: bool = field(init=False, repr=False)
     arrival_time: int = field(init=False, repr=False)
@@ -33,7 +34,10 @@ class _Customer:
 
         self.data = CustomerData(number=number, enter=True)
         self.data.name = f'Car {number}'
-        self.data.expected_fueling_time = int(self._settings.customer_fuel_needed() / self._settings.pump_fueling_speed)
+
+        fuel_needed = self._settings.customer_fuel_needed()
+        self.data.fuel_needed = fuel_needed
+        self.data.expected_fueling_time = int(fuel_needed / self._settings.pump_fueling_speed)
         self.data.eating = self._settings.if_eating()
 
         self._fuel_gotten = 0

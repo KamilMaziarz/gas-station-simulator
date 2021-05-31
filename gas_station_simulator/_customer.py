@@ -1,7 +1,7 @@
 import copy
 from dataclasses import dataclass, field
 from typing import Optional, Generator, Any
-
+import random
 import simpy
 from simpy import Event
 
@@ -55,6 +55,9 @@ class _Customer:
             yield pump_parking_place_request
             self.env.logger.info(f'[{self.data.name}]: Entering a fuel pump parking place.')
 
+            # Getting out of the car, walking, etc.
+            yield self.env.timeout(random.randint(20, 40))
+
             pump_request = gas_station.fuel_pumps.request(priority=1)
             yield pump_request
 
@@ -83,15 +86,29 @@ class _Customer:
                                      f' Have {fuel_percentage}% of the fuel needed.')
                 left_fueling_time -= fuel_got
 
+                # Getting out of the pump parking place and going to the end of the queue
+                yield self.env.timeout(random.randint(20, 40))
+
             gas_station.fuel_pumps.release(pump_request)
             self.env.logger.info(f'[STATION]: Releasing a pump. {gas_station.fuel_pumps.count} of'
                                  f' {gas_station.fuel_pumps.capacity} pumps are allocated.')
 
             if left_fueling_time == 0:
+
+                # Going to the building etc.
+                yield self.env.timeout(random.randint(30, 60))
+
                 yield self.env.process(self.interact_with_the_cashier(gas_station=gas_station))
                 if self.data.eating:
                     yield self.env.process(self.wait_and_take_the_food(gas_station=gas_station))
+
+                # Going back to the car etc.
+                yield self.env.timeout(random.randint(30, 60))
+
                 gas_station.fuel_pump_parking_place.release(pump_parking_place_request)
+
+        # Leaving
+        yield self.env.timeout(random.randint(15, 30))
 
         gas_station.parking_places.put(1)
         self.env.logger.info(f'[{self.data.name}]: Leaving the station.')

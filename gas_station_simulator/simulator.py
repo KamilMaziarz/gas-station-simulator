@@ -26,15 +26,14 @@ if __name__ == '__main__':
         customer_fuel_needed=lambda: random.randint(30, 70),
         pump_fueling_speed=0.2,
     )
-    simulation_time = 60*60*24*2
+    simulation_time = 60*60*24*4
     results = GasStationSimulator(settings=settings).run(time=simulation_time)
 
     profit_calculation_settings_ver_1 = ProfitCalculationSettings(
         hot_dog_profit=2.0,
-        fuel_profit_per_litre=1,
+        fuel_profit_per_litre=0.2,
         cashier_hourly_cost=30,
         pump_monthly_depreciation_cost=10_000,
-        other_monthly_costs=40_000,
     )
 
     profit_calculator_ver_1 = ProfitCalculator(

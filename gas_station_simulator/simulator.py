@@ -1,6 +1,5 @@
 if __name__ == '__main__':
     import itertools
-    import pprint
     import random
 
     import numpy as np

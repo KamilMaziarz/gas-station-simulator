@@ -17,7 +17,7 @@ class GasStationSimulator:
         self._settings = settings
         self._customers_results: List[CustomerData] = []
 
-    def run(self, time: int, return_dataframe: bool = True) -> Union[List[CustomerData], pd.DataFrame]:
+    def run(self, time: int, return_dataframe: bool = True, save: bool = False) -> Union[List[CustomerData], pd.DataFrame]:
         random.seed(0)
         environment = _SimulationEnvironment()
         gas_station = _GasStation(environment, settings=self._settings)
@@ -27,6 +27,8 @@ class GasStationSimulator:
             results = self._transform_results_to_dataframe(results=self._customers_results)
         else:
             results = self._customers_results
+        if save:
+            results.to_csv('results.csv', index=False)
         return results
 
     def get_monitored_resources(self) -> pd.DataFrame:  # noqa

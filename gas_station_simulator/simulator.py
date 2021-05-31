@@ -28,7 +28,8 @@ if __name__ == '__main__':
     )
     simulation_time = 60*60*24*4
     gas_station_simulator = GasStationSimulator(settings=settings)
-    results = gas_station_simulator.run(time=simulation_time)
+    results = gas_station_simulator.run(time=simulation_time, save=True)
+
     monitored_resources = gas_station_simulator.get_monitored_resources()
 
     profit_calculation_settings_ver_1 = ProfitCalculationSettings(

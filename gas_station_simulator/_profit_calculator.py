@@ -54,7 +54,7 @@ class ProfitCalculator:
 
     def _calculate_cashiers_cost(self) -> int:
         hours = self.simulation_time / (60 * 60)
-        hourly_cost = self.simulation_settings.cashier_quantity * self.profit_calculation_settings.cashier_hourly_cost
+        hourly_cost = self.simulation_settings.cashiers_quantity * self.profit_calculation_settings.cashier_hourly_cost
         total_cashiers_cost = int(hours * hourly_cost)
         return total_cashiers_cost
 

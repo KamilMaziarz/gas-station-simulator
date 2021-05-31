@@ -16,7 +16,7 @@ class _GasStation:
 
         self.fuel_pumps = MonitoredPreemptiveResource('fuel_pumps', environment, settings.pumps_quantity)
         self.fuel_pump_parking_place = MonitoredResource('fuel_pump_parking', environment, settings.pumps_quantity)
-        self.cashiers = MonitoredPriorityResource('cashiers', environment, settings.cashier_quantity)
+        self.cashiers = MonitoredPriorityResource('cashiers', environment, settings.cashiers_quantity)
         self.parking_places = MonitoredContainer(
             'gas_station_parking',
             environment,
@@ -41,4 +41,4 @@ class _GasStation:
                 self.env.logger.info(f'[PUMP BREAK]: One of the pumps has broken and will be unavailable for'
                                      f' {_get_time_string(working_time, print_days=False)}.')
                 yield self.env.timeout(outage_time)
-                print(f'[PUMP BREAK]: The pump is repaired.')
+                self.env.logger.info(f'[PUMP BREAK]: The pump is repaired.')

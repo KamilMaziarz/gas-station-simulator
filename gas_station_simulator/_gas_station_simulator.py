@@ -1,10 +1,10 @@
 import itertools
-import random
+import os
 from typing import List, Generator, Any, Union
 
 import pandas as pd
 from simpy import Event
-import os
+
 from gas_station_simulator._customer import _Customer, CustomerData
 from gas_station_simulator._environment import _SimulationEnvironment
 from gas_station_simulator._gas_station import _GasStation
@@ -23,7 +23,6 @@ class GasStationSimulator:
             return_dataframe: bool = True,
             save: bool = False,
     ) -> Union[List[CustomerData], pd.DataFrame]:
-        random.seed(0)
         environment = _SimulationEnvironment()
         gas_station = _GasStation(environment, settings=self._settings)
         environment.process(self._car_generator(environment=environment, gas_station=gas_station))
@@ -79,13 +78,6 @@ class GasStationSimulator:
         self._customers_results.append(customer_result)
 
     def _transform_results_to_dataframe(self, results: List[CustomerData]) -> pd.DataFrame:  # noqa
-        transformed_results = pd.DataFrame()
-
-        for customer_result in results:
-            customer_data = {}
-            for key in customer_result.__dict__.keys():
-                customer_data[key] = [getattr(customer_result, key)]
-            transformed_results = pd.concat([transformed_results, pd.DataFrame(customer_data)])
-
+        transformed_results = pd.concat([pd.DataFrame.from_dict(r.__dict__, orient='index').T for r in results])
         transformed_results.sort_values(by='number', inplace=True)
         return transformed_results.reset_index(drop=True)

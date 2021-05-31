@@ -5,7 +5,7 @@ from typing import Callable
 @dataclass
 class SimulationSettings:
     pumps_quantity: int
-    cashier_quantity: int
+    cashiers_quantity: int
     pump_working_time: Callable[[], int]
     pump_outage_time: Callable[[], int]
     customer_fuel_needed: Callable[[], int]

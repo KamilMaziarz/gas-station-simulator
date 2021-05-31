@@ -4,6 +4,8 @@ import simpy
 from simpy import Event
 
 from gas_station_simulator._environment import _SimulationEnvironment
+from gas_station_simulator._monitored_resources import MonitoredResource, MonitoredPreemptiveResource, \
+    MonitoredPriorityResource
 from gas_station_simulator._settings import SimulationSettings
 from gas_station_simulator._utils import _get_time_string
 
@@ -13,9 +15,9 @@ class _GasStation:
         self.env = environment
         self._settings = settings
 
-        self.fuel_pumps = simpy.PreemptiveResource(environment, settings.pumps_quantity)
-        self.fuel_pump_parking_place = simpy.Resource(environment, settings.pumps_quantity)
-        self.cashiers = simpy.PriorityResource(environment, settings.cashier_quantity)
+        self.fuel_pumps = MonitoredPreemptiveResource('fuel_pumps', environment, settings.pumps_quantity)
+        self.fuel_pump_parking_place = MonitoredResource('fuel_pump_parking', environment, settings.pumps_quantity)
+        self.cashiers = MonitoredPriorityResource('cashiers', environment, settings.cashier_quantity)
         self.parking_places = simpy.Container(
             environment,
             init=settings.pumps_quantity * 4,

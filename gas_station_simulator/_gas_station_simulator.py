@@ -33,6 +33,7 @@ class GasStationSimulator:
             results = self._customers_results
         if save:
             results.to_csv('results.csv', index=False)
+        environment.logger.handlers.clear()
         return results
 
     def get_monitored_resources(self) -> pd.DataFrame:  # noqa

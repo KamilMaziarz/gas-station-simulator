@@ -15,7 +15,7 @@ if __name__ == '__main__':
     # 2 pumps brake every 7.5 days (7.5*2 -> 2 breaks in 15 days of 2 pumps -> 1 break/pump/15 days),
     # 3 pumps every 5 days (5*3) etc.
 
-    simulation_time = 60 * 60 * 24 * 30
+    simulation_time = 60 * 60 * 24 * 30  # 30 days
 
     hot_dog_margin = 2.5
     checkout_monthly_cost = 40_000
@@ -91,3 +91,4 @@ if __name__ == '__main__':
 
         combination_results = pd.DataFrame.from_dict({**profit_results, **simulation_combination}, orient='index').T
         all_combinations_results = pd.concat([all_combinations_results, combination_results])
+        all_combinations_results.to_csv('combination_results.csv', index=False)

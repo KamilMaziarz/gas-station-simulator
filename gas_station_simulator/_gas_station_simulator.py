@@ -17,7 +17,12 @@ class GasStationSimulator:
         self._settings = settings
         self._customers_results: List[CustomerData] = []
 
-    def run(self, time: int, return_dataframe: bool = True, save: bool = False) -> Union[List[CustomerData], pd.DataFrame]:
+    def run(
+            self,
+            time: int,
+            return_dataframe: bool = True,
+            save: bool = False,
+    ) -> Union[List[CustomerData], pd.DataFrame]:
         random.seed(0)
         environment = _SimulationEnvironment()
         gas_station = _GasStation(environment, settings=self._settings)

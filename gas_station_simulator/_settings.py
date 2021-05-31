@@ -23,4 +23,3 @@ class ProfitCalculationSettings:
     cashier_hourly_cost: float
     hot_dog_profit: float
     fuel_profit_per_litre: float
-    other_monthly_costs: int

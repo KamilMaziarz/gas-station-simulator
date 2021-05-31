@@ -19,48 +19,47 @@ class ProfitCalculator:
         self.simulation_time = simulation_time
 
     def calculate(self) -> Dict[str, int]:
-        return {
-            'average_monthly_profit': self.calculate_average_monthly_profit(),
-            'average_profit_per_car': self.calculate_average_profit_per_car(),
-            'average_missed_monthly_profit': self.calculate_average_missed_monthly_profit(),
+        results_by_source = {
+            'pumps_cost': self._calculate_pumps_cost(),
+            'cashiers_cost': self._calculate_cashiers_cost(),
+            'hot_dogs_income': self._calculate_hot_dogs_profit(),
+            'fuel_income': self._calculate_fuel_profit(),
+            'cars_quantity': int(self.results['enter'].sum()),
+            'missed_cars_quantity': int(self.results['enter'].size - self.results['enter'].sum()),
         }
 
-    def calculate_average_missed_monthly_profit(self) -> int:
-        average_profit_per_car = self.calculate_average_profit_per_car()
-        cars_missed = self.results['enter'].size - self.results['enter'].sum()
-        missed_profit = cars_missed * average_profit_per_car
+        results_by_source_with_totals = self._add_total_cost_and_income(results_by_source=results_by_source)
+
         months = self.simulation_time / (60*60*24*30)
-        return int(missed_profit / months)
+        results = {key: int(value/months) for key, value in results_by_source_with_totals.items()}
 
-    def calculate_average_profit_per_car(self) -> int:
-        total_profit = self.calculate_average_monthly_profit()
-        return int(total_profit / self.results['enter'].sum())
+        results['income_per_car'] = int(results['total_income'] / results['cars_quantity'])
+        results['profit'] = results['total_income'] - results['total_cost']
+        results['missed_income'] = results['income_per_car'] * results['missed_cars_quantity']
 
-    def calculate_average_monthly_profit(self) -> int:
-        pumps_cost = self._calculate_pumps_cost()
-        cashiers_cost = self._calculate_cashiers_cost()
-        hot_dogs_profit = self._calculate_hot_dogs_profit()
-        fuel_profit = self._calculate_fuel_profit()
-        profit = fuel_profit + hot_dogs_profit - pumps_cost - cashiers_cost
-        profit -= self.profit_calculation_settings.other_monthly_costs
-        months = self.simulation_time / (60*60*24*30)
-        return int(profit / months)
+        return results
 
-    def _calculate_pumps_cost(self) -> float:
+    def _add_total_cost_and_income(self, results_by_source: Dict[str, float]) -> Dict[str, float]:  # noqa
+        for flow_type in ['cost', 'income']:
+            values = [value for key, value in results_by_source.items() if flow_type in key]
+            results_by_source['total_' + flow_type] = sum(values)
+        return results_by_source
+
+    def _calculate_pumps_cost(self) -> int:
         months = self.simulation_time / (60 * 60 * 24 * 30)
         monthly_cost = \
             self.simulation_settings.pumps_quantity * self.profit_calculation_settings.pump_monthly_depreciation_cost
-        total_pumps_cost = monthly_cost * months
+        total_pumps_cost = int(monthly_cost * months)
         return total_pumps_cost
 
-    def _calculate_cashiers_cost(self) -> float:
+    def _calculate_cashiers_cost(self) -> int:
         hours = self.simulation_time / (60 * 60)
         hourly_cost = self.simulation_settings.cashier_quantity * self.profit_calculation_settings.cashier_hourly_cost
-        total_cashiers_cost = hours * hourly_cost
+        total_cashiers_cost = int(hours * hourly_cost)
         return total_cashiers_cost
 
-    def _calculate_hot_dogs_profit(self) -> float:
-        return self.profit_calculation_settings.hot_dog_profit * self.results['eating'].sum()
+    def _calculate_hot_dogs_profit(self) -> int:
+        return int(self.profit_calculation_settings.hot_dog_profit * self.results['eating'].sum())
 
-    def _calculate_fuel_profit(self) -> float:
-        return self.profit_calculation_settings.fuel_profit_per_litre * self.results['fuel_needed'].sum()
+    def _calculate_fuel_profit(self) -> int:
+        return int(self.profit_calculation_settings.fuel_profit_per_litre * self.results['fuel_needed'].sum())

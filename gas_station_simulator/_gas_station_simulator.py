@@ -4,10 +4,11 @@ from typing import List, Generator, Any, Union
 
 import pandas as pd
 from simpy import Event
-
+import os
 from gas_station_simulator._customer import _Customer, CustomerData
 from gas_station_simulator._environment import _SimulationEnvironment
 from gas_station_simulator._gas_station import _GasStation
+from gas_station_simulator._monitored_resources import _MONITORED_RESOURCES_PATH
 from gas_station_simulator._settings import SimulationSettings
 
 
@@ -27,6 +28,22 @@ class GasStationSimulator:
         else:
             results = self._customers_results
         return results
+
+    def get_monitored_resources(self) -> pd.DataFrame:  # noqa
+        monitored_data = pd.DataFrame()
+        for file_name in os.listdir(_MONITORED_RESOURCES_PATH):
+            if monitored_data.empty:
+                monitored_data = pd.read_csv(_MONITORED_RESOURCES_PATH / file_name)
+            else:
+                monitored_data = pd.merge(
+                    monitored_data,
+                    pd.read_csv(_MONITORED_RESOURCES_PATH / file_name),
+                    on='time',
+                    how='outer',
+                )
+        monitored_data.sort_values(by='time', inplace=True)
+        monitored_data = monitored_data.fillna(method='ffill').fillna(method='bfill').reset_index(drop=True)
+        return monitored_data
 
     def _car_generator(
             self,

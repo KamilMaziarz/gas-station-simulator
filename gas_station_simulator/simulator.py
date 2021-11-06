@@ -8,7 +8,7 @@ if __name__ == '__main__':
 
     random.seed(0)
 
-    simulation_time = 60 * 60 * 24 * 30  # 30 days
+    simulation_time = 60**2 * 24 * 30
 
     cars_road_flow = 80_000
     margin_arrivals_impact = -0.1

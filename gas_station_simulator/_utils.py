@@ -17,8 +17,8 @@ def _get_time_string(time: int, print_days: bool = True) -> str:
     minutes = floor(left_time/seconds_in_a_minute)
     left_time -= minutes*seconds_in_a_minute
 
-    if print_days:
-        current_time = f'Day {days} - {hours:02d}:{minutes:02d}:{left_time:02d}'  # noqa
-    else:
-        current_time = f'{hours:02d}:{minutes:02d}:{left_time:02d}'
-    return current_time
+    return (
+        f'Day {days} - {hours:02d}:{minutes:02d}:{left_time:02d}'
+        if print_days
+        else f'{hours:02d}:{minutes:02d}:{left_time:02d}'
+    )

@@ -14,7 +14,7 @@ def save_monitored_data(method):
     @wraps(method)
     def inner(self, *args, **kwargs):
         method_return_value = method(self, *args, **kwargs)
-        simulation_day = self._env.now // (60*60)
+        simulation_day = self._env.now // 60**2
         if simulation_day > self._day:
             _MONITORED_RESOURCES_PATH.mkdir(parents=True, exist_ok=True)
             file_path = (_MONITORED_RESOURCES_PATH / self.name).with_suffix('.csv')

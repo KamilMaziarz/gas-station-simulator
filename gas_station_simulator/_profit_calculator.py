@@ -30,7 +30,7 @@ class ProfitCalculator:
 
         results_by_source_with_totals = self._add_total_cost_and_income(results_by_source=results_by_source)
 
-        months = self.simulation_time / (60*60*24*30)
+        months = self.simulation_time / (60**2 * 24 * 30)
         results = {key: int(value/months) for key, value in results_by_source_with_totals.items()}
 
         results['income_per_car'] = int(results['total_income'] / results['cars_quantity'])
@@ -46,17 +46,15 @@ class ProfitCalculator:
         return results_by_source
 
     def _calculate_pumps_cost(self) -> int:
-        months = self.simulation_time / (60 * 60 * 24 * 30)
+        months = self.simulation_time / (60**2 * 24 * 30)
         monthly_cost = \
             self.simulation_settings.pumps_quantity * self.profit_calculation_settings.pump_monthly_depreciation_cost
-        total_pumps_cost = int(monthly_cost * months)
-        return total_pumps_cost
+        return int(monthly_cost * months)
 
     def _calculate_cashiers_cost(self) -> int:
-        hours = self.simulation_time / (60 * 60)
+        hours = self.simulation_time / 60**2
         hourly_cost = self.simulation_settings.cashiers_quantity * self.profit_calculation_settings.cashier_hourly_cost
-        total_cashiers_cost = int(hours * hourly_cost)
-        return total_cashiers_cost
+        return int(hours * hourly_cost)
 
     def _calculate_hot_dogs_profit(self) -> int:
         return int(self.profit_calculation_settings.hot_dog_profit * self.results['eating'].sum())

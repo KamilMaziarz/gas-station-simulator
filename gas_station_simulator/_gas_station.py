@@ -41,4 +41,4 @@ class _GasStation:
                 self.env.logger.info(f'[PUMP BREAK]: One of the pumps has broken and will be unavailable for'
                                      f' {_get_time_string(working_time, print_days=False)}.')
                 yield self.env.timeout(outage_time)
-                self.env.logger.info(f'[PUMP BREAK]: The pump is repaired.')
+                self.env.logger.info('[PUMP BREAK]: The pump is repaired.')
